@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekplanning Sport & School</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F3F4F6;min-height:100vh;font-size:14px}
+:root{
+  --bg:#ffffff;--bg2:#F3F4F6;--bg3:#E9EAEC;
+  --border:#E2E3E5;--border2:#CBD0D8;
+  --text:#111827;--text2:#6B7280;--text3:#9CA3AF;
+  --orange:#E05A1B;--orange-bg:#FDF3EE;
+  --green:#1D9E75;--green-bg:#F4FBF8;--green-light:#E1F5EE;
+  --purple:#7F77DD;--purple-bg:#EEEDFE;--purple-light:#EEEDFE;
+  --red:#D85A30;--red-bg:#FDF3EE;--red-light:#FAECE7;
+  --blue:#185FA5;--blue-bg:#EEF5FD;
+  --radius:8px;--radius-sm:6px;
+}
+
+/* LOGIN */
+#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;gap:1.5rem}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:.5rem}
+.login-logo-dot{width:12px;height:12px;border-radius:50%;background:var(--orange)}
+.login-logo h1{font-size:22px;font-weight:600;color:var(--text)}
+.login-subtitle{font-size:13px;color:var(--text2);text-align:center}
+.login-cards{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.role-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 1.5rem;cursor:pointer;text-align:center;min-width:150px;transition:border-color .15s,box-shadow .15s,transform .1s}
+.role-card:hover{border-color:var(--orange);box-shadow:0 2px 8px rgba(224,90,27,.1);transform:translateY(-1px)}
+.role-card-icon{font-size:22px;margin-bottom:8px}
+.role-card h2{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.role-card p{font-size:11px;color:var(--text2)}
+.pw-form{display:none;flex-direction:column;gap:6px;margin-top:10px;align-items:center}
+.pw-form input{padding:6px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:12px;background:var(--bg2);color:var(--text);width:175px}
+.pw-form input:focus{outline:none;border-color:var(--orange)}
+.pw-form button{padding:6px 16px;border-radius:var(--radius-sm);border:none;background:var(--orange);color:#fff;font-size:12px;font-weight:500;cursor:pointer}
+.pw-error{font-size:11px;color:#DC2626;display:none}
+.config-notice{background:#FEF9EE;border:1px solid #FBBF24;border-radius:var(--radius);padding:12px 16px;max-width:500px;font-size:12px;color:#92400E;text-align:center}
+.config-notice strong{display:block;margin-bottom:4px}
+
+/* TOPBAR */
+#main-app{display:none}
+.topbar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.topbar-brand{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px}
+.brand-dot{width:9px;height:9px;border-radius:50%;background:var(--orange);flex-shrink:0}
+.role-badge{font-size:11px;padding:2px 9px;border-radius:10px;font-weight:500}
+.badge-leerling{background:var(--green-light);color:#085041}
+.badge-docent{background:var(--blue-bg);color:var(--blue)}
+.badge-coach{background:var(--blue-bg);color:var(--blue)}
+.badge-coordinator{background:#FAEEDA;color:#854F0B}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.topbar select{padding:4px 7px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;background:var(--bg2);color:var(--text)}
+
+/* BUTTONS */
+.btn{padding:5px 11px;border-radius:var(--radius-sm);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-weight:500;transition:background .12s}
+.btn-ghost{border:1px solid var(--border);background:transparent;color:var(--text2)}
+.btn-ghost:hover{background:var(--bg2)}
+.btn-orange{border:none;background:var(--orange);color:#fff}
+.btn-orange:hover{background:#c94e17}
+.btn-purple{border:none;background:#534AB7;color:#fff}
+.btn-purple:hover{background:#3C3489}
+.btn-green{border:none;background:var(--green);color:#fff}
+.btn-green:hover{background:#0F6E56}
+.btn-danger{border:1px solid #FCA5A5;background:transparent;color:#DC2626}
+.btn-danger:hover{background:#FEF2F2}
+
+/* WEEK NAV */
+.week-nav{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.week-label{font-size:13px;font-weight:600;color:var(--text)}
+.week-sub{font-size:11px;color:var(--text2)}
+/* DAG TOGGLE ROW */
+.dag-toggle-row{display:grid;grid-template-columns:100px repeat(5,1fr);gap:3px;margin-bottom:6px;align-items:center}
+.dag-toggle-cell{display:flex;align-items:center;justify-content:center;padding:4px 3px;background:var(--bg2);border:1px dashed var(--border2);border-radius:var(--radius-sm)}
+.dag-hand-toggle{width:22px;height:22px;border-radius:4px;border:1px solid var(--border2);cursor:pointer;font-size:12px;display:inline-flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text3);transition:background .1s;padding:0;font-weight:600}
+.dag-hand-toggle:hover{border-color:var(--text2)}
+.dag-hand-rood{background:var(--red-light)!important;color:#993C1D!important;border-color:#F5C4B3!important}
+
+/* SYNC STATUS */
+.sync-bar{padding:5px 16px;background:#F0FDF4;border-bottom:1px solid #BBF7D0;font-size:11px;color:#15803D;display:none;align-items:center;gap:6px}
+.sync-bar.error{background:#FEF2F2;border-color:#FCA5A5;color:#DC2626}
+.sync-bar.saving{background:#EFF6FF;border-color:#BFDBFE;color:var(--blue)}
+
+/* GRID */
+.planning-scroll{overflow-x:auto;padding:14px 16px}
+.planning-grid{min-width:580px}
+.grid-header{display:grid;grid-template-columns:100px repeat(5,1fr);gap:3px;margin-bottom:3px}
+.gh-cell{text-align:center;font-size:11px;font-weight:600;color:var(--text2);padding:5px 3px}
+.gh-cell.today{color:var(--orange)}
+.grid-row{display:grid;grid-template-columns:100px repeat(5,1fr);gap:3px;margin-bottom:3px;align-items:stretch}
+.time-cell{font-size:10px;color:var(--text2);padding:5px 6px;display:flex;flex-direction:column;justify-content:center}
+.time-label{font-weight:600;color:var(--text);font-size:11px}
+.slot{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 6px;min-height:54px;display:flex;flex-direction:column;justify-content:center;gap:3px;transition:border-color .1s}
+.slot.pause-slot{background:var(--bg2);border-color:transparent;min-height:26px}
+.act-label{font-size:9px;color:var(--text3);margin-bottom:1px}
+.slot select{width:100%;font-size:11px;padding:3px 4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text);cursor:pointer}
+.slot-note{width:100%;font-size:10px;padding:2px 5px;border:1px solid var(--border);border-radius:3px;background:var(--bg2);color:var(--text);margin-top:2px;font-family:inherit;resize:none}
+.slot-note:focus{outline:none;border-color:var(--orange);background:var(--bg)}
+.slot-note.filled{background:#FFFBEB;border-color:#FBBF24;color:#92400E}
+.slot-note.filled:focus{border-color:#F59E0B;background:#FFFBEB}
+.slot-note::placeholder{color:var(--text3)}
+.sbadge{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500;display:inline-block}
+.sb-groen{background:var(--green-light);color:#085041}
+.sb-paars{background:var(--purple-light);color:#3C3489}
+.sb-rood{background:var(--red-light);color:#993C1D}
+
+/* OVERLAYS */
+.overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:100;align-items:flex-start;justify-content:center;padding-top:40px;overflow-y:auto}
+.panel{background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;width:700px;max-width:95vw;margin-bottom:40px}
+.panel-sm{width:500px}
+.panel h2{font-size:16px;font-weight:600;margin-bottom:1rem;color:var(--text)}
+.panel-footer{display:flex;gap:8px;margin-top:1.2rem;justify-content:flex-end;border-top:1px solid var(--border);padding-top:1rem}
+.beheer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:7px;max-height:400px;overflow-y:auto;padding-right:4px}
+.leerling-row{display:flex;gap:5px;align-items:center}
+.leerling-num{font-size:11px;color:var(--text2);width:22px;text-align:right;flex-shrink:0}
+.leerling-row input{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;background:var(--bg2);color:var(--text)}
+.leerling-row input:focus{outline:none;border-color:var(--orange)}
+
+/* STANDAARD GRID */
+.std-grid-wrap{overflow-x:auto}
+.std-grid{min-width:500px}
+.std-row{display:grid;grid-template-columns:100px repeat(5,1fr);gap:3px;margin-bottom:3px;align-items:stretch}
+.std-header-row{display:grid;grid-template-columns:100px repeat(5,1fr);gap:3px;margin-bottom:3px}
+.std-slot{border-radius:var(--radius-sm);padding:4px 5px;min-height:36px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;font-size:11px;font-weight:500;transition:background .1s;background:var(--bg);color:var(--text2)}
+.std-slot:hover{border-color:var(--text2)}
+.std-slot.s-aanwezig{background:var(--green-light);color:#0F6E56;border-color:#9FE1CB}
+.std-slot.s-afwezig{background:var(--red-light);color:#993C1D;border-color:#F5C4B3}
+.std-slot.s-pause{background:var(--bg2);border-color:transparent;cursor:default;min-height:22px}
+.std-legend{display:flex;gap:12px;align-items:center;margin-bottom:10px;font-size:12px;color:var(--text2);flex-wrap:wrap}
+.std-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* WEEK SELECT */
+.week-sel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;max-height:340px;overflow-y:auto;margin-bottom:1rem}
+.week-opt{padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--bg);transition:border-color .1s,background .1s}
+.week-opt:hover{border-color:var(--orange);background:var(--orange-bg)}
+.week-opt.selected{border-color:var(--orange);background:var(--orange-bg)}
+.week-opt-num{font-size:13px;font-weight:600;color:var(--text)}
+.week-opt-dates{font-size:11px;color:var(--text2)}
+
+/* CONFIG PANEL */
+.config-grid{display:flex;flex-direction:column;gap:10px}
+.config-row{display:flex;flex-direction:column;gap:4px}
+.config-row label{font-size:12px;font-weight:500;color:var(--text2)}
+.config-row input{padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:var(--bg2);color:var(--text)}
+.config-row input:focus{outline:none;border-color:var(--orange)}
+.config-note{font-size:11px;color:var(--text2);background:var(--bg2);border-radius:var(--radius-sm);padding:8px 10px}
+
+/* HAND OVERRIDE TOGGLE */
+.hand-toggle{width:20px;height:20px;border-radius:4px;border:1px solid var(--border2);cursor:pointer;font-size:11px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;transition:background .1s;vertical-align:middle;line-height:1}
+.hand-leeg{background:var(--bg2);color:var(--text3)}
+.hand-rood{background:var(--red-light);color:#993C1D;border-color:#F5C4B3}
+.hand-groen{background:var(--green-light);color:#085041;border-color:#9FE1CB}
+
+/* VIEW TOGGLE */
+.view-toggle-btn{padding:4px 10px;border-radius:var(--radius-sm);font-size:12px;cursor:pointer;font-weight:500;border:1px solid var(--border);background:var(--bg2);color:var(--text2);transition:all .1s}
+.view-toggle-btn.active{background:var(--orange);color:#fff;border-color:var(--orange)}
+
+/* MAAND VIEW */
+.maand-grid-wrap{padding:14px 16px}
+.maand-grid-inner{min-width:380px}
+.maand-header-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:6px}
+.maand-week-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:4px}
+.maand-dag{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 3px;min-height:142px;display:flex;flex-direction:column;gap:2px}
+.maand-dag.buiten-maand{opacity:.3}
+.maand-dag.vandaag{border-color:var(--orange)!important;border-width:2px}
+.maand-dag-num{font-size:10px;font-weight:600;color:var(--text)}
+.les-bar{border-radius:2px;display:flex;align-items:center;padding:0 3px;font-size:8px;font-weight:700;height:12px;min-height:12px;flex-shrink:0}
+.les-sep{height:3px;flex-shrink:0;border-bottom:1px dashed var(--border2);margin:0}
+.dd-neutral{background:var(--bg2);color:var(--text3)}
+.dd-aanwezig{background:var(--green-light);color:#085041}
+.dd-afwezig{background:var(--red-light);color:#993C1D}
+.dd-toets{background:var(--purple-light);color:#3C3489}
+.maand-legend{display:flex;gap:14px;align-items:center;margin-top:12px;font-size:11px;color:var(--text2);flex-wrap:wrap}
+.maand-legend-dot{width:14px;height:10px;border-radius:2px;flex-shrink:0;border:1px solid transparent}
+
+/* TOETS NOTIFICATIE */
+.toets-info-box{background:var(--purple-bg);border:1px solid #C4C0F5;border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:1rem;font-size:12px;line-height:1.6}
+.suggestion-box{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);max-height:160px;overflow-y:auto;margin-top:3px;display:none}
+.suggestion-row{padding:7px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border)}
+.suggestion-row:last-child{border-bottom:none}
+.suggestion-row:hover{background:var(--bg2)}
+.selected-badge{font-size:11px;color:#3C3489;background:var(--purple-bg);border:1px solid #C4C0F5;border-radius:10px;padding:2px 8px;display:inline-block;margin-top:4px}
+.toets-les-check{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;border:1px solid var(--border);background:var(--bg);transition:border-color .1s,background .1s;user-select:none}
+.toets-les-check:hover{border-color:#C4C0F5;background:var(--purple-bg)}
+.toets-les-check.is-checked{border-color:#C4C0F5;background:var(--purple-bg)}
+.toets-les-check input[type=checkbox]{width:14px;height:14px;cursor:pointer;accent-color:#7F77DD;flex-shrink:0}
+.toets-les-tijd{font-size:10px;color:var(--text2);margin-left:auto}
+
+/* PRINT */
+@media print{
+  body,html{background:#fff}
+  #app-wrap>*:not(#print-area){display:none!important}
+  #print-area{display:block!important}
+  @page{size:A4 landscape;margin:10mm}
+}
+#print-area{display:none}
+.print-page{page-break-after:always;padding:0}
+.print-page:last-child{page-break-after:auto}
+.print-title{font-size:13pt;font-weight:700;margin-bottom:2mm}
+.print-sub{font-size:9pt;color:#555;margin-bottom:3mm}
+.print-table{width:100%;border-collapse:collapse;font-size:8pt}
+.print-table th{background:#f0f0f0;border:0.5pt solid #ccc;padding:3pt 4pt;text-align:center;font-weight:600}
+.print-table td{border:0.5pt solid #ccc;padding:3pt 4pt;vertical-align:middle}
+.td-time{font-size:7pt;color:#444;width:50pt}
+.td-pause{background:#f8f8f8;color:#888;text-align:center;font-style:italic;font-size:7pt}
+.pc-groen{background:#E1F5EE;color:#085041}
+.pc-rood{background:#FAECE7;color:#993C1D}
+.pc-paars{background:#EEEDFE;color:#3C3489}
+.pc-groen-std{background:#F4FBF8;color:#0F6E56;font-style:italic}
+.pc-rood-std{background:#FDF3EE;color:#D85A30;font-style:italic}
+</style>
+</head>
+<body>
+<div id="app-wrap">
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-logo">
+    <div class="login-logo-dot"></div>
+    <h1>Weekplanning Sport & School</h1>
+  </div>
+  <div class="login-subtitle">Kies je rol om in te loggen</div>
+
+  <div id="config-notice" class="config-notice" style="display:none">
+    <strong>⚙️ SharePoint nog niet geconfigureerd</strong>
+    De app draait in offline modus (lokale opslag). Klik op "Configuratie" om SharePoint in te stellen.
+  </div>
+
+  <div class="login-cards">
+    <div class="role-card" onclick="selectRole('leerling')">
+      <div class="role-card-icon">🎓</div>
+      <h2>Leerling</h2><p>Bekijk je planning</p>
+      <div class="pw-form" id="pw-leerling">
+        <input type="password" placeholder="Wachtwoord" id="pw-input-leerling" onkeydown="if(event.key==='Enter')tryLoginLeerling()">
+        <button onclick="tryLoginLeerling()">Inloggen</button>
+        <div class="pw-error" id="err-leerling">Onjuist wachtwoord</div>
+      </div>
+    </div>
+    <div class="role-card" onclick="selectRole('docent')">
+      <div class="role-card-icon">📚</div>
+      <h2>Docent</h2><p>Bekijk de planning</p>
+      <div class="pw-form" id="pw-docent">
+        <input type="password" placeholder="Wachtwoord" id="pw-input-docent" onkeydown="if(event.key==='Enter')doLogin('docent','docentdocent')">
+        <button onclick="doLogin('docent','docentdocent')">Inloggen</button>
+        <div class="pw-error" id="err-docent">Onjuist wachtwoord</div>
+      </div>
+    </div>
+    <div class="role-card" onclick="selectRole('coach')">
+      <div class="role-card-icon">📋</div>
+      <h2>Coach</h2><p>Beheer aanwezigheid</p>
+      <div class="pw-form" id="pw-coach">
+        <input type="password" placeholder="Wachtwoord" id="pw-input-coach" onkeydown="if(event.key==='Enter')doLogin('coach','coach123')">
+        <button onclick="doLogin('coach','coach123')">Inloggen</button>
+        <div class="pw-error" id="err-coach">Onjuist wachtwoord</div>
+      </div>
+    </div>
+    <div class="role-card" onclick="selectRole('coordinator')">
+      <div class="role-card-icon">⚙️</div>
+      <h2>Coördinator</h2><p>Beheer afwezigheid</p>
+      <div class="pw-form" id="pw-coordinator">
+        <input type="password" placeholder="Wachtwoord" id="pw-input-coordinator" onkeydown="if(event.key==='Enter')doLogin('coordinator','coord!@')">
+        <button onclick="doLogin('coordinator','coord!@')">Inloggen</button>
+        <div class="pw-error" id="err-coordinator">Onjuist wachtwoord</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center">
+    <button class="btn btn-ghost" style="font-size:11px" onclick="openConfig()">⚙️ SharePoint configuratie</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app">
+  <div class="topbar">
+    <div class="topbar-brand"><div class="brand-dot"></div>Weekplanning</div>
+    <span class="role-badge" id="role-badge"></span>
+    <div class="topbar-right">
+      <select id="leerling-select" onchange="onLeerlingChange()"></select>
+      <button class="btn btn-purple" id="btn-standaard" style="display:none" onclick="openStandaard()">📅 Standaardrooster</button>
+      <button class="btn btn-orange" id="btn-beheer" style="display:none" onclick="openBeheer()">👥 Leerlingen</button>
+      <button class="btn btn-orange" id="btn-print-enkel" style="display:none" onclick="printEnkel()">🖨️ Printen</button>
+      <button class="btn btn-green" id="btn-print-overzicht" style="display:none" onclick="openWeekSel()">📄 Overzicht printen</button>
+      <button class="btn btn-ghost" onclick="logout()">↩ Uitloggen</button>
+    </div>
+  </div>
+
+  <div id="sync-bar" class="sync-bar">
+    <span id="sync-msg">✓ Gesynchroniseerd met SharePoint</span>
+  </div>
+
+  <div class="week-nav">
+    <div style="display:flex;gap:4px;margin-right:10px;flex-shrink:0">
+      <button class="view-toggle-btn active" id="vbtn-week" onclick="setView('week')">📅 Week</button>
+      <button class="view-toggle-btn" id="vbtn-maand" onclick="setView('maand')">📆 Maand</button>
+    </div>
+    <div id="week-nav-controls" style="display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="changeWeek(-1)">◀ Vorige</button>
+      <div>
+        <div class="week-label" id="week-label"></div>
+        <div class="week-sub" id="week-sub"></div>
+      </div>
+      <button class="btn btn-ghost" onclick="changeWeek(1)">Volgende ▶</button>
+    </div>
+    <div id="maand-nav-controls" style="display:none;align-items:center;gap:10px;flex:1;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="changeMonth(-1)">◀ Vorige</button>
+      <div class="week-label" id="maand-label"></div>
+      <button class="btn btn-ghost" onclick="changeMonth(1)">Volgende ▶</button>
+    </div>
+  </div>
+
+  <div class="planning-scroll">
+    <div class="planning-grid" id="planning-grid"></div>
+  </div>
+  <div class="maand-grid-wrap" id="maand-grid-wrap" style="display:none">
+    <div class="maand-grid-inner" id="maand-grid-inner"></div>
+  </div>
+</div>
+
+<!-- PRINT AREA -->
+<div id="print-area"></div>
+
+<!-- SHAREPOINT CONFIG -->
+<div class="overlay" id="config-overlay">
+  <div class="panel panel-sm">
+    <h2>⚙️ SharePoint Configuratie</h2>
+    <div class="config-grid">
+      <div class="config-row">
+        <label>SharePoint Site URL</label>
+        <input type="text" id="cfg-site" placeholder="https://jouwschool.sharepoint.com/sites/jouwsite">
+      </div>
+      <div class="config-row">
+        <label>Client ID (App Registration)</label>
+        <input type="text" id="cfg-clientid" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+      </div>
+      <div class="config-note">
+        📌 Deze gegevens krijg je van IT. Zie de werkbeschrijving stap 1–3.<br>
+        Zonder configuratie werkt de app in offline modus (localStorage).
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn btn-ghost" onclick="closeConfig()">Annuleren</button>
+      <button class="btn btn-orange" onclick="saveConfig()">💾 Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEERLINGEN BEHEER -->
+<div class="overlay" id="beheer-overlay">
+  <div class="panel">
+    <h2>👥 Leerlingen & wachtwoorden</h2>
+    <div class="beheer-grid" id="beheer-grid"></div>
+    <div class="panel-footer">
+      <button class="btn btn-ghost" onclick="closeBeheer()">Annuleren</button>
+      <button class="btn btn-orange" onclick="saveBeheer()">💾 Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- STANDAARDROOSTER -->
+<div class="overlay" id="standaard-overlay">
+  <div class="panel" style="width:760px">
+    <h2>📅 Standaardrooster — <span id="std-naam"></span></h2>
+    <div class="std-legend">
+      <span style="display:flex;align-items:center;gap:5px"><div class="std-legend-dot" style="background:var(--green)"></div>Aanwezig</span>
+      <span style="display:flex;align-items:center;gap:5px"><div class="std-legend-dot" style="background:var(--red)"></div>Afwezig</span>
+      <span style="display:flex;align-items:center;gap:5px"><div class="std-legend-dot" style="background:#ccc"></div>Leeg</span>
+      <em style="font-size:11px;color:var(--text2);margin-left:auto">Klik een vakje om te wisselen</em>
+    </div>
+    <div class="std-grid-wrap">
+      <div class="std-grid" id="std-grid"></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn btn-danger" onclick="clearStandaard()">🗑 Alles wissen</button>
+      <button class="btn btn-ghost" onclick="closeStandaard()">Annuleren</button>
+      <button class="btn btn-purple" onclick="saveStandaard()">💾 Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK SELECTIE -->
+<div class="overlay" id="weeksel-overlay">
+  <div class="panel panel-sm">
+    <h2>📄 Kies een week voor het overzicht</h2>
+    <div class="week-sel-grid" id="week-sel-grid"></div>
+    <div class="panel-footer">
+      <button class="btn btn-ghost" onclick="closeWeekSel()">Annuleren</button>
+      <button class="btn btn-green" onclick="doPrintOverzicht()">🖨️ Overzicht printen</button>
+    </div>
+  </div>
+</div>
+<!-- TOETS NOTIFICATIE -->
+<div class="overlay" id="toetsnotif-overlay">
+  <div class="panel panel-sm">
+    <h2>📝 Collega informeren over toets</h2>
+    <div class="toets-info-box" id="toetsnotif-info"></div>
+    <div class="config-grid">
+      <div class="config-row" id="toets-extra-section" style="display:none">
+        <label>Toets loopt ook door in: <span style="font-weight:400;color:var(--text3)">(optioneel, meerdere lesuren)</span></label>
+        <div id="toets-extra-lessen" style="display:flex;flex-direction:column;gap:4px;margin-top:4px"></div>
+      </div>
+      <div class="config-row">
+        <label>Zoek collega op naam of e-mailadres</label>
+        <input type="text" id="toets-search" placeholder="Typ naam of e-mailadres…" oninput="onToetsSearch(this.value)" autocomplete="off">
+        <div class="suggestion-box" id="toets-suggestions"></div>
+        <div id="toets-selected" style="display:none"></div>
+        <input type="hidden" id="toets-email">
+        <input type="hidden" id="toets-selname">
+      </div>
+      <div class="config-row">
+        <label>Vak / omschrijving <span style="font-weight:400;color:var(--text3)">(optioneel)</span></label>
+        <input type="text" id="toets-vak" placeholder="bijv. Wiskunde, Duits…">
+      </div>
+      <div id="toets-offline-note" class="config-note" style="display:none">
+        ℹ️ Geen Microsoft-verbinding — typ het e-mailadres direct in het zoekveld.
+      </div>
+      <div id="toets-perm-note" class="config-note" style="display:none;background:#FEF9EE;border-color:#FBBF24;color:#92400E">
+        ⚠️ Zoeken werkt niet (ontbrekende rechten). Je kunt het e-mailadres handmatig intypen.
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn btn-ghost" onclick="closeToetsNotif()">Overslaan</button>
+      <button class="btn btn-purple" id="btn-stuur-toets" onclick="stuurToetsNotif()" disabled>📨 Verstuur melding</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end app-wrap -->
+
+<script>
+// ============================================================
+// CONFIGURATIE & DATA STRUCTUUR
+// ============================================================
+const LESSEN=[
+  {id:'les1',label:'Les 1',tijd:'08:25–08:55'},
+  {id:'les2',label:'Les 2',tijd:'08:55–09:40'},
+  {id:'les3',label:'Les 3',tijd:'09:40–10:25'},
+  {id:'les4',label:'Les 4',tijd:'10:25–11:10'},
+  {id:'pauze1',label:'Pauze',tijd:'11:10–11:30',pause:true},
+  {id:'les5',label:'Les 5',tijd:'11:30–12:15'},
+  {id:'les6',label:'Les 6',tijd:'12:15–13:00'},
+  {id:'pauze2',label:'Pauze',tijd:'13:00–13:30',pause:true},
+  {id:'les7',label:'Les 7',tijd:'13:30–14:15'},
+  {id:'les8',label:'Les 8',tijd:'14:15–15:00'},
+];
+const DAGNAMEN=['Ma','Di','Wo','Do','Vr'];
+const OCHTEND_IDS=['les2','les3','les4','les5','les6']; // 08:55-13:00
+const MIDDAG_IDS=['les7','les8']; // 13:00-15:00
+const MAAND_NAMEN=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
+const ACTIVITEITEN=[
+  {value:'leeg',label:'(leeg)',kleur:''},
+  {value:'zelfstandig',label:'Zelfstandig',kleur:'groen'},
+  {value:'klassikaal',label:'Klassikale les',kleur:'groen'},
+  {value:'1op1',label:'1-op-1 instructie',kleur:'groen'},
+  {value:'toets',label:'Toets',kleur:'paars'},
+  {value:'training',label:'Training',kleur:'rood'},
+  {value:'wedstrijd',label:'Wedstrijd',kleur:'rood'},
+  {value:'toernooi',label:'Toernooi',kleur:'rood'},
+  {value:'rust',label:'Rust',kleur:'rood'},
+  {value:'vakantie',label:'Vakantie',kleur:'rood'},
+  {value:'studiedag',label:'Studiedag',kleur:'rood'},
+];
+const ACT_MAP={};ACTIVITEITEN.forEach(a=>ACT_MAP[a.value]=a);
+const AFWEZIG_SET=new Set(['training','wedstrijd','toernooi','rust','vakantie','studiedag']);
+const AANWEZIG_SET=new Set(['zelfstandig','klassikaal','1op1','toets']);
+const KLEUR_CSS={groen:'#1D9E75',paars:'#7F77DD',rood:'#D85A30'};
+const KLEUR_BG={groen:'#F4FBF8',paars:'#EEEDFE',rood:'#FDF3EE'};
+const BADGE_CLS={groen:'sb-groen',paars:'sb-paars',rood:'sb-rood'};
+
+// ============================================================
+// STAAT
+// ============================================================
+let role=null, weekStart=null, curLeerling=0, stdDraft={}, selectedPrintWeek=null, viewMode='week', currentMonth=null;
+let spConfig={siteUrl:'',clientId:''};
+let accessToken=null;
+let spOnline=false;
+
+// ============================================================
+// SHAREPOINT / GRAPH API HELPERS
+// ============================================================
+// LIJST NAMEN IN SHAREPOINT (maak deze aan via werkbeschrijving):
+// "WP_Leerlingen"   - kolommen: LeerlingIndex(Number), Naam(Text), Wachtwoord(Text)
+// "WP_Planning"     - kolommen: LeerlingIndex(Number), WeekCode(Text), SlotKey(Text), Activiteit(Text)
+// "WP_Standaard"    - kolommen: LeerlingIndex(Number), SlotKey(Text), Waarde(Text)
+
+function schoolYear(){const n=new Date();const j=n.getMonth()>=7?n.getFullYear():n.getFullYear()-1;return`${j}-${j+1}`;}
+
+function loadConfig(){
+  try{
+    const c=localStorage.getItem('wp_spconfig');
+    if(c){spConfig=JSON.parse(c);}
+  }catch(e){}
+  if(!spConfig.siteUrl||!spConfig.clientId){
+    document.getElementById('config-notice').style.display='block';
+  }
+}
+
+function saveConfig(){
+  spConfig.siteUrl=document.getElementById('cfg-site').value.trim().replace(/\/$/,'');
+  spConfig.clientId=document.getElementById('cfg-clientid').value.trim();
+  localStorage.setItem('wp_spconfig',JSON.stringify(spConfig));
+  document.getElementById('config-notice').style.display=
+    (!spConfig.siteUrl||!spConfig.clientId)?'block':'none';
+  closeConfig();
+  if(spConfig.siteUrl&&spConfig.clientId) initMSAL();
+}
+
+function openConfig(){
+  document.getElementById('cfg-site').value=spConfig.siteUrl||'';
+  document.getElementById('cfg-clientid').value=spConfig.clientId||'';
+  document.getElementById('config-overlay').style.display='flex';
+}
+function closeConfig(){document.getElementById('config-overlay').style.display='none';}
+
+// MSAL (Microsoft Authentication Library) wordt geladen wanneer nodig
+let msalInstance=null;
+let msalLoaded=false;
+
+async function initMSAL(){
+  if(!spConfig.siteUrl||!spConfig.clientId){spOnline=false;return;}
+  if(!msalLoaded){
+    await loadScript('https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js');
+    msalLoaded=true;
+  }
+  try{
+    const authority=`https://login.microsoftonline.com/common`;
+    msalInstance=new msal.PublicClientApplication({
+      auth:{clientId:spConfig.clientId,authority,redirectUri:window.location.href.split('?')[0]},
+      cache:{cacheLocation:'localStorage',storeAuthStateInCookie:false}
+    });
+    await msalInstance.initialize();
+    const accounts=msalInstance.getAllAccounts();
+    if(accounts.length>0){
+      const resp=await msalInstance.acquireTokenSilent({
+        scopes:[`${spConfig.siteUrl}/.default`],
+        account:accounts[0]
+      });
+      accessToken=resp.accessToken;
+      spOnline=true;
+    }
+  }catch(e){spOnline=false;}
+}
+
+async function getToken(){
+  if(!msalInstance) return null;
+  try{
+    const accounts=msalInstance.getAllAccounts();
+    const req={scopes:[`${spConfig.siteUrl}/.default`],account:accounts[0]||undefined};
+    let resp;
+    if(accounts.length>0) resp=await msalInstance.acquireTokenSilent(req);
+    else resp=await msalInstance.acquireTokenPopup(req);
+    accessToken=resp.accessToken;spOnline=true;
+    return accessToken;
+  }catch(e){spOnline=false;return null;}
+}
+
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    if(document.querySelector(`script[src="${src}"]`)){res();return;}
+    const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;
+    document.head.appendChild(s);
+  });
+}
+
+// Haal SharePoint Site ID + List ID op
+async function spGetListItems(listName){
+  const token=await getToken();
+  if(!token) return null;
+  try{
+    const hostPart=new URL(spConfig.siteUrl).host;
+    const sitePath=new URL(spConfig.siteUrl).pathname;
+    // Graph API aanroep
+    const siteResp=await fetch(
+      `https://graph.microsoft.com/v1.0/sites/${hostPart}:${sitePath}`,
+      {headers:{Authorization:`Bearer ${token}`}}
+    );
+    if(!siteResp.ok) return null;
+    const siteData=await siteResp.json();
+    const siteId=siteData.id;
+
+    const itemsResp=await fetch(
+      `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${listName}/items?$expand=fields&$top=5000`,
+      {headers:{Authorization:`Bearer ${token}`}}
+    );
+    if(!itemsResp.ok) return null;
+    const data=await itemsResp.json();
+    return data.value||[];
+  }catch(e){return null;}
+}
+
+async function spAddListItem(listName,fields){
+  const token=await getToken();if(!token) return false;
+  try{
+    const hostPart=new URL(spConfig.siteUrl).host;
+    const sitePath=new URL(spConfig.siteUrl).pathname;
+    const siteResp=await fetch(`https://graph.microsoft.com/v1.0/sites/${hostPart}:${sitePath}`,{headers:{Authorization:`Bearer ${token}`}});
+    if(!siteResp.ok) return false;
+    const siteId=(await siteResp.json()).id;
+    const resp=await fetch(
+      `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${listName}/items`,
+      {method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},
+       body:JSON.stringify({fields})}
+    );
+    return resp.ok;
+  }catch(e){return false;}
+}
+
+async function spUpdateListItem(listName,itemId,fields){
+  const token=await getToken();if(!token) return false;
+  try{
+    const hostPart=new URL(spConfig.siteUrl).host;
+    const sitePath=new URL(spConfig.siteUrl).pathname;
+    const siteResp=await fetch(`https://graph.microsoft.com/v1.0/sites/${hostPart}:${sitePath}`,{headers:{Authorization:`Bearer ${token}`}});
+    if(!siteResp.ok) return false;
+    const siteId=(await siteResp.json()).id;
+    const resp=await fetch(
+      `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${listName}/items/${itemId}/fields`,
+      {method:'PATCH',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},
+       body:JSON.stringify(fields)}
+    );
+    return resp.ok;
+  }catch(e){return false;}
+}
+
+// ============================================================
+// DATA LAAG - HYBRIDE (SharePoint of localStorage fallback)
+// ============================================================
+function localKey_leerlingen(){return'wp6_leerlingen';}
+function localKey_week(l,w){return`wp6_${schoolYear()}_${l}_${w}`;}
+function localKey_std(l){return`wp6_std_${l}`;}
+
+function getLeerlingenLocal(){
+  try{const d=localStorage.getItem(localKey_leerlingen());
+    return d?JSON.parse(d):Array.from({length:25},(_,i)=>({naam:`Leerling ${String(i+1).padStart(2,'0')}`,pw:'',spId:null}));
+  }catch(e){return Array.from({length:25},(_,i)=>({naam:`Leerling ${String(i+1).padStart(2,'0')}`,pw:'',spId:null}));}
+}
+function saveLeerlingenLocal(arr){try{localStorage.setItem(localKey_leerlingen(),JSON.stringify(arr));}catch(e){}}
+
+function getWeekDataLocal(l,w){
+  try{const r=localStorage.getItem(localKey_week(l,w));return r?JSON.parse(r):{};} catch(e){return{};}
+}
+function setWeekDataLocal(l,w,d){try{localStorage.setItem(localKey_week(l,w),JSON.stringify(d));}catch(e){}}
+
+function getStandaardLocal(l){
+  try{const r=localStorage.getItem(localKey_std(l));return r?JSON.parse(r):{};} catch(e){return{};}
+}
+function saveStandaardLocal(l,d){try{localStorage.setItem(localKey_std(l),JSON.stringify(d));}catch(e){}}
+
+function localKey_hand(l,w){return`wp6_hand_${schoolYear()}_${l}_${w}`;}
+function getHandDataLocal(l,w){try{const r=localStorage.getItem(localKey_hand(l,w));return r?JSON.parse(r):{};} catch(e){return{};}}
+function setHandDataLocal(l,w,d){try{localStorage.setItem(localKey_hand(l,w),JSON.stringify(d));}catch(e){}}
+
+function localKey_notes(l,w){return`wp6_notes_${schoolYear()}_${l}_${w}`;}
+function getNotesLocal(l,w){try{const r=localStorage.getItem(localKey_notes(l,w));return r?JSON.parse(r):{};} catch(e){return{};}}
+function saveNote(d,id,value){
+  const key=`${d}_${id}`;
+  const wstr=getWeekStr(weekStart);
+  const notes=getNotesLocal(curLeerling,wstr);
+  if(value.trim()) notes[key]=value;else delete notes[key];
+  try{localStorage.setItem(localKey_notes(curLeerling,wstr),JSON.stringify(notes));}catch(e){}
+}
+
+// Publieke API (met SP-fallback)
+async function getLeerlingen(){
+  if(spOnline){
+    try{
+      const items=await spGetListItems('WP_Leerlingen');
+      if(items&&items.length>0){
+        const arr=Array.from({length:25},(_,i)=>({naam:`Leerling ${String(i+1).padStart(2,'0')}`,pw:'',spId:null}));
+        items.forEach(item=>{
+          const f=item.fields;
+          const idx=parseInt(f.LeerlingIndex);
+          if(idx>=0&&idx<25) arr[idx]={naam:f.Naam||arr[idx].naam,pw:f.Wachtwoord||'',spId:item.id};
+        });
+        saveLeerlingenLocal(arr);
+        return arr;
+      }
+    }catch(e){}
+  }
+  return getLeerlingenLocal();
+}
+
+async function saveLeerlingen(arr){
+  saveLeerlingenLocal(arr);
+  if(spOnline){
+    showSync('saving','Opslaan naar SharePoint...');
+    try{
+      for(let i=0;i<arr.length;i++){
+        const l=arr[i];
+        const fields={LeerlingIndex:i,Naam:l.naam,Wachtwoord:l.pw};
+        if(l.spId) await spUpdateListItem('WP_Leerlingen',l.spId,fields);
+        else{
+          const ok=await spAddListItem('WP_Leerlingen',fields);
+          if(ok){/* refresh */}
+        }
+      }
+      showSync('ok','Opgeslagen');
+    }catch(e){showSync('error','Fout bij opslaan');}
+  }
+}
+
+async function getWeekData(l,w){
+  if(spOnline){
+    try{
+      const items=await spGetListItems('WP_Planning');
+      if(items){
+        const data={};
+        items.filter(it=>parseInt(it.fields.LeerlingIndex)===l&&it.fields.WeekCode===w)
+             .forEach(it=>data[it.fields.SlotKey]={act:it.fields.Activiteit,spId:it.id});
+        setWeekDataLocal(l,w,data);
+        return data;
+      }
+    }catch(e){}
+  }
+  return getWeekDataLocal(l,w);
+}
+
+async function setSlot(l,w,key,act){
+  const data=getWeekDataLocal(l,w);
+  if(!act||act===''){delete data[key];}
+  else{
+    const existing=data[key]||{};
+    data[key]={act,spId:existing.spId||null};
+  }
+  setWeekDataLocal(l,w,data);
+  if(spOnline){
+    showSync('saving','Opslaan...');
+    try{
+      const existing=data[key];
+      const fields={LeerlingIndex:l,WeekCode:w,SlotKey:key,Activiteit:act||''};
+      if(existing&&existing.spId) await spUpdateListItem('WP_Planning',existing.spId,fields);
+      else if(act) await spAddListItem('WP_Planning',fields);
+      showSync('ok','Opgeslagen ✓');
+    }catch(e){showSync('error','Offline - lokaal opgeslagen');}
+  }
+}
+
+async function getStandaard(l){
+  if(spOnline){
+    try{
+      const items=await spGetListItems('WP_Standaard');
+      if(items){
+        const data={};
+        items.filter(it=>parseInt(it.fields.LeerlingIndex)===l)
+             .forEach(it=>data[it.fields.SlotKey]={waarde:it.fields.Waarde,spId:it.id});
+        const simplified={};
+        Object.keys(data).forEach(k=>simplified[k]=data[k].waarde);
+        saveStandaardLocal(l,simplified);
+        return simplified;
+      }
+    }catch(e){}
+  }
+  return getStandaardLocal(l);
+}
+
+async function saveStandaard_SP(l,draft){
+  saveStandaardLocal(l,draft);
+  if(spOnline){
+    showSync('saving','Standaardrooster opslaan...');
+    try{
+      for(const key of Object.keys(draft)){
+        const fields={LeerlingIndex:l,SlotKey:key,Waarde:draft[key]};
+        await spAddListItem('WP_Standaard',fields);
+      }
+      showSync('ok','Standaardrooster opgeslagen ✓');
+    }catch(e){showSync('error','Offline - lokaal opgeslagen');}
+  }
+}
+
+function showSync(type,msg){
+  const bar=document.getElementById('sync-bar');
+  const txt=document.getElementById('sync-msg');
+  bar.className='sync-bar '+(type==='ok'?'':type==='saving'?'saving':'error');
+  txt.textContent=msg;
+  bar.style.display='flex';
+  if(type==='ok') setTimeout(()=>bar.style.display='none',3000);
+}
+
+// ============================================================
+// LOGIN
+// ============================================================
+function selectRole(r){
+  document.querySelectorAll('.pw-form').forEach(f=>f.style.display='none');
+  const f=document.getElementById('pw-'+r);if(f){f.style.display='flex';document.getElementById('pw-input-'+r).focus();}
+}
+
+async function tryLoginLeerling(){
+  const val=document.getElementById('pw-input-leerling').value;
+  const err=document.getElementById('err-leerling');
+  const ll=await getLeerlingen();
+  const idx=ll.findIndex(l=>l.pw&&l.pw===val);
+  if(idx>=0){err.style.display='none';loginAs('leerling',idx);}
+  else{err.style.display='block';}
+}
+
+function doLogin(r,correct){
+  const val=document.getElementById('pw-input-'+r).value;
+  const err=document.getElementById('err-'+r);
+  if(val===correct){err.style.display='none';loginAs(r,0);}
+  else{err.style.display='block';}
+}
+
+function loginAs(r,idx){
+  role=r;curLeerling=idx;
+  // ISOWeek maandag
+  const now=new Date();
+  const day=now.getDay()||7;
+  const mon=new Date(now);mon.setDate(now.getDate()-(day-1));
+  weekStart=mon;
+  currentMonth=new Date(now.getFullYear(),now.getMonth(),1);
+  viewMode='week';
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  const badge=document.getElementById('role-badge');
+  badge.textContent=r.charAt(0).toUpperCase()+r.slice(1);
+  badge.className='role-badge badge-'+r;
+  const isCoach=(r==='coach');const isCoord=(r==='coordinator');
+  document.getElementById('btn-beheer').style.display=isCoach?'inline-flex':'none';
+  document.getElementById('btn-standaard').style.display=isCoach?'inline-flex':'none';
+  document.getElementById('btn-print-enkel').style.display=(isCoach||isCoord)?'inline-flex':'none';
+  document.getElementById('btn-print-overzicht').style.display=isCoach?'inline-flex':'none';
+  buildLeerlingSelect();
+  setView('week');
+}
+
+async function buildLeerlingSelect(){
+  const sel=document.getElementById('leerling-select');
+  const ll=await getLeerlingen();
+  if(role==='leerling'){
+    sel.innerHTML=`<option value="${curLeerling}">${esc(ll[curLeerling].naam)}</option>`;
+    sel.disabled=true;
+  }else{
+    sel.disabled=false;
+    sel.innerHTML=ll.map((l,i)=>`<option value="${i}"${i===curLeerling?' selected':''}>${esc(l.naam)}</option>`).join('');
+  }
+}
+
+async function onLeerlingChange(){
+  curLeerling=parseInt(document.getElementById('leerling-select').value);
+  await renderGrid();
+}
+
+function logout(){
+  role=null;
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.querySelectorAll('.pw-form').forEach(f=>f.style.display='none');
+  document.querySelectorAll('.pw-error').forEach(e=>e.style.display='none');
+  document.querySelectorAll('input[type=password]').forEach(i=>i.value='');
+}
+
+// ============================================================
+// WEEKSTART HELPERS (zonder dayjs)
+// ============================================================
+function getWeekStr(d){
+  const date=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const dayNum=date.getUTCDay()||7;
+  date.setUTCDate(date.getUTCDate()+4-dayNum);
+  const yearStart=new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  const weekNo=Math.ceil((((date-yearStart)/86400000)+1)/7);
+  return`${date.getUTCFullYear()}-W${String(weekNo).padStart(2,'0')}`;
+}
+function getISOWeekNum(d){return parseInt(getWeekStr(d).split('-W')[1]);}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function formatDate(d,fmt){
+  const dd=String(d.getDate()).padStart(2,'0');
+  const mm=String(d.getMonth()+1).padStart(2,'0');
+  const months=['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  if(fmt==='D/M') return`${d.getDate()}/${d.getMonth()+1}`;
+  if(fmt==='D MMM') return`${d.getDate()} ${months[d.getMonth()]}`;
+  if(fmt==='D MMM YYYY') return`${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  return`${dd}-${mm}-${d.getFullYear()}`;
+}
+function todayStr(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
+function dateStr(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+function changeWeek(dir){weekStart=addDays(weekStart,dir*7);renderGrid();}
+
+// ============================================================
+// ROOSTER RENDEREN
+// ============================================================
+function getSelectStyle(actVal){
+  const base='flex:1;font-size:11px;padding:3px 2px;border-radius:4px;';
+  const a=ACT_MAP[actVal];
+  if(!a||!a.kleur) return base+'border:1px solid var(--border);background:var(--bg2);color:var(--text)';
+  if(a.kleur==='groen') return base+'border:1px solid #9FE1CB;background:#E8F8F0;color:#0F6E56;font-weight:500';
+  if(a.kleur==='paars') return base+'border:1px solid #C4C0F5;background:#EEEDFE;color:#3C3489;font-weight:500';
+  if(a.kleur==='rood') return base+'border:1px solid #F5C4B3;background:#FDF3EE;color:#993C1D;font-weight:500';
+  return base+'border:1px solid var(--border);background:var(--bg2);color:var(--text)';
+}
+function getOptionStyle(kleur){
+  if(kleur==='groen') return 'color:#0F6E56;font-weight:500;background:#E8F8F0';
+  if(kleur==='paars') return 'color:#3C3489;font-weight:500;background:#EEEDFE';
+  if(kleur==='rood') return 'color:#993C1D;font-weight:500;background:#FDF3EE';
+  return 'color:var(--text2)';
+}
+function getEffStyle(act,stdVal,hand){
+  if(hand==='rood') return'border-left:3px solid #D85A30;background:#FDF3EE;border-radius:0';
+  if(hand==='groen') return'border-left:3px solid #1D9E75;background:#F4FBF8;border-radius:0';
+  if(act&&act!=='leeg'&&ACT_MAP[act]&&ACT_MAP[act].kleur){
+    const k=ACT_MAP[act].kleur;
+    return`border-left:3px solid ${KLEUR_CSS[k]};background:${KLEUR_BG[k]};border-radius:0`;
+  }
+  if(!act||act==='leeg'){
+    if(stdVal==='aanwezig') return'border-left:3px solid #1D9E75;background:#F4FBF8;border-radius:0';
+    if(stdVal==='afwezig') return'border-left:3px solid #D85A30;background:#FDF3EE;border-radius:0';
+  }
+  return'';
+}
+
+async function renderGrid(){
+  const pg=document.getElementById('planning-grid');
+  const mw=document.getElementById('maand-grid-wrap');
+  if(viewMode==='maand'){
+    pg.style.display='none';mw.style.display='block';
+    await renderMonthGrid();
+  }else{
+    pg.style.display='';mw.style.display='none';
+    await renderWeekGrid();
+  }
+}
+
+async function renderWeekGrid(){
+  const ll=await getLeerlingen();
+  const lnaam=ll[curLeerling]?ll[curLeerling].naam:`Leerling ${curLeerling+1}`;
+  const wk=getISOWeekNum(weekStart);
+  const wstr=getWeekStr(weekStart);
+  document.getElementById('week-label').textContent=`Week ${wk} · ${lnaam}`;
+  document.getElementById('week-sub').textContent=`${formatDate(weekStart,'D MMM')} – ${formatDate(addDays(weekStart,4),'D MMM YYYY')}`;
+
+  const data=await getWeekData(curLeerling,wstr);
+  const std=await getStandaard(curLeerling);
+  const hData=getHandDataLocal(curLeerling,wstr);
+  const notes=getNotesLocal(curLeerling,wstr);
+  const canEdit=(role==='coach');
+  const canAfwezig=(role==='coordinator');
+  const viewOnly=(role==='leerling'||role==='docent');
+
+  let html='<div class="grid-header"><div class="gh-cell"></div>';
+  for(let d=0;d<5;d++){
+    const dag=addDays(weekStart,d);
+    const isToday=dateStr(dag)===todayStr();
+    html+=`<div class="gh-cell${isToday?' today':''}"><strong>${DAGNAMEN[d]}</strong><br><span style="font-weight:400">${formatDate(dag,'D/M')}</span></div>`;
+  }
+  html+='</div>';
+
+  // Dag-toggle rij: alleen voor coach en coordinator
+  if(canEdit||canAfwezig){
+    const dagToglLabel='<div class="time-cell" style="font-size:9px;line-height:1.35;color:var(--text2)">Hele dag<br><strong style="color:var(--text)">afwezig</strong></div>';
+    html+=`<div class="dag-toggle-row">${dagToglLabel}`;
+    for(let d=0;d<5;d++){
+      const allRood=LESSEN.filter(l=>!l.pause).every(l=>hData[`${d}_${l.id}`]==='rood');
+      const cls='dag-hand-toggle'+(allRood?' dag-hand-rood':'');
+      const sym=allRood?'✕':'○';
+      html+=`<div class="dag-toggle-cell"><button class="${cls}" onclick="setDagAfwezig(${d})" title="Klik om hele dag af/aanwezig te zetten">${sym}</button></div>`;
+    }
+    html+='</div>';
+  }
+
+  LESSEN.forEach(les=>{
+    const isPauze=!!les.pause;
+    html+=`<div class="grid-row"><div class="time-cell"><div class="time-label">${les.label}</div><div>${les.tijd}</div></div>`;
+    for(let d=0;d<5;d++){
+      const key=`${d}_${les.id}`;
+      const slot=data[key]||{};
+      const act=slot.act||'';
+      const stdVal=std[key]||'';
+      const hand=hData[key]||'';
+      if(isPauze){html+=`<div class="slot pause-slot"></div>`;continue;}
+      const sty=getEffStyle(act,stdVal,hand);
+      html+=`<div class="slot" style="${sty}">`;
+      if(viewOnly){
+        if(act&&act!=='leeg'&&ACT_MAP[act]&&ACT_MAP[act].kleur){
+          const a=ACT_MAP[act];html+=`<span class="sbadge ${BADGE_CLS[a.kleur]}">${a.label}</span>`;
+        }else if(!act||act==='leeg'){
+          if(stdVal==='aanwezig') html+=`<span class="sbadge sb-groen">Aanwezig</span>`;
+          else if(stdVal==='afwezig') html+=`<span class="sbadge sb-rood">Afwezig</span>`;
+          else html+=`<span style="font-size:10px;color:var(--text3)">—</span>`;
+        }
+      }else if(canEdit){
+        const htCls=`hand-toggle hand-${hand||'leeg'}`;
+        const htSym=hand==='rood'?'✕':hand==='groen'?'✓':'○';
+        html+=`<div class="act-label">Activiteit:</div><div style="display:flex;gap:3px;align-items:center"><select style="${getSelectStyle(act)}" onchange="setAct(${d},'${les.id}',this.value)">`;
+        ACTIVITEITEN.forEach(a=>{
+          html+=`<option value="${a.value}"${act===a.value?' selected':''} style="${getOptionStyle(a.kleur)}">${a.label}</option>`;
+        });
+        html+=`</select><button class="${htCls}" onclick="setHandOverride(${d},'${les.id}')" title="Klik om handmatig aan/afwezig te markeren">${htSym}</button></div>`;
+        html+=`<input type="text" class="slot-note${notes[key]?' filled':''}" value="${esc(notes[key]||'')}" placeholder="Opmerking…" oninput="saveNote(${d},'${les.id}',this.value);this.classList.toggle('filled',this.value.trim().length>0)">`;
+      }else if(canAfwezig){
+        if(hand==='rood'){
+          html+=`<span class="sbadge sb-rood" style="margin-bottom:3px">Afwezig</span>`;
+        }else if(hand==='groen'){
+          html+=`<span class="sbadge sb-groen" style="margin-bottom:3px">Aanwezig</span>`;
+        }else if(act&&act!=='leeg'&&AANWEZIG_SET.has(act)&&ACT_MAP[act]){
+          html+=`<span class="sbadge ${BADGE_CLS[ACT_MAP[act].kleur]}" style="margin-bottom:3px">${ACT_MAP[act].label}</span>`;
+        }else if((!act||act==='leeg')&&stdVal==='aanwezig'){
+          html+=`<span class="sbadge sb-groen" style="margin-bottom:3px">Aanwezig</span>`;
+        }
+        const htCls=`hand-toggle hand-${hand||'leeg'}`;
+        const htSym=hand==='rood'?'✕':hand==='groen'?'✓':'○';
+        const coordActVal=(act&&AFWEZIG_SET.has(act))?act:'';
+        html+=`<div class="act-label">Afwezig:</div><div style="display:flex;gap:3px;align-items:center"><select style="${getSelectStyle(coordActVal)}" onchange="setAfwezigCoord(${d},'${les.id}',this.value)"><option value="">—</option>`;
+        ACTIVITEITEN.filter(a=>AFWEZIG_SET.has(a.value)).forEach(a=>{
+          const sel=(act===a.value&&AFWEZIG_SET.has(act))?' selected':'';
+          html+=`<option value="${a.value}"${sel} style="${getOptionStyle(a.kleur)}">${a.label}</option>`;
+        });
+        html+=`</select><button class="${htCls}" onclick="setHandOverride(${d},'${les.id}')" title="Klik om handmatig aan/afwezig te markeren">${htSym}</button></div>`;
+        html+=`<input type="text" class="slot-note${notes[key]?' filled':''}" value="${esc(notes[key]||'')}" placeholder="Opmerking…" oninput="saveNote(${d},'${les.id}',this.value);this.classList.toggle('filled',this.value.trim().length>0)">`;
+      }
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  document.getElementById('planning-grid').innerHTML=html;
+}
+
+async function setAct(d,id,act){
+  const key=`${d}_${id}`;
+  const wstr=getWeekStr(weekStart);
+  await setSlot(curLeerling,wstr,key,act==='leeg'?'':act);
+  await renderGrid();
+  if(act==='toets') openToetsNotif(d,id);
+}
+async function setAfwezigCoord(d,id,act){
+  const key=`${d}_${id}`;
+  const wstr=getWeekStr(weekStart);
+  await setSlot(curLeerling,wstr,key,act);
+  await renderGrid();
+}
+async function applyBulk(){}  // verwijderd, vervangen door setDagAfwezig
+
+// ============================================================
+// HANDMATIGE OVERRIDE
+// ============================================================
+async function setDagAfwezig(d){
+  const wstr=getWeekStr(weekStart);
+  const hData=getHandDataLocal(curLeerling,wstr);
+  const lesKeys=LESSEN.filter(l=>!l.pause).map(l=>`${d}_${l.id}`);
+  const allRood=lesKeys.every(k=>hData[k]==='rood');
+  if(allRood){lesKeys.forEach(k=>delete hData[k]);}
+  else{lesKeys.forEach(k=>hData[k]='rood');}
+  setHandDataLocal(curLeerling,wstr,hData);
+  await renderWeekGrid();
+}
+async function setHandOverride(d,id){
+  const key=`${d}_${id}`;
+  const wstr=getWeekStr(weekStart);
+  const hData=getHandDataLocal(curLeerling,wstr);
+  const cur=hData[key]||'';
+  const next=cur===''?'rood':cur==='rood'?'groen':'';
+  if(next===''){delete hData[key];}else{hData[key]=next;}
+  setHandDataLocal(curLeerling,wstr,hData);
+  await renderWeekGrid();
+}
+
+// ============================================================
+// WEERGAVE TOGGLE & MAAND NAVIGATIE
+// ============================================================
+function setView(mode){
+  viewMode=mode;
+  document.getElementById('vbtn-week').classList.toggle('active',mode==='week');
+  document.getElementById('vbtn-maand').classList.toggle('active',mode==='maand');
+  document.getElementById('week-nav-controls').style.display=mode==='week'?'flex':'none';
+  document.getElementById('maand-nav-controls').style.display=mode==='maand'?'flex':'none';
+  renderGrid();
+}
+
+function changeMonth(dir){
+  currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()+dir,1);
+  renderGrid();
+}
+
+// ============================================================
+// MAAND HULPFUNCTIES
+// ============================================================
+function getMonthWeeks(year,month){
+  const firstDay=new Date(year,month,1);
+  const lastDay=new Date(year,month+1,0);
+  const firstDow=firstDay.getDay()||7;
+  const firstMon=new Date(firstDay);
+  firstMon.setDate(firstDay.getDate()-(firstDow-1));
+  const weeks=[];
+  let monday=new Date(firstMon);
+  while(monday<=lastDay){
+    const week=[];
+    for(let d=0;d<5;d++){const day=new Date(monday);day.setDate(monday.getDate()+d);week.push(day);}
+    weeks.push(week);
+    monday.setDate(monday.getDate()+7);
+  }
+  return weeks;
+}
+
+function getDayPartStatus(wData,hData,stdData,dayIdx,lessonIds){
+  let aan=0,af=0;
+  lessonIds.forEach(lesId=>{
+    const key=`${dayIdx}_${lesId}`;
+    const slot=wData[key]||{};
+    const act=slot.act||'';
+    const hand=hData[key]||'';
+    const stdVal=stdData[key]||'';
+    let st='';
+    if(hand==='rood') st='af';
+    else if(hand==='groen') st='aan';
+    else if(act&&act!=='leeg'&&AFWEZIG_SET.has(act)) st='af';
+    else if(act&&act!=='leeg'&&AANWEZIG_SET.has(act)) st='aan';
+    else if(!act||act==='leeg'){
+      if(stdVal==='aanwezig') st='aan';
+      else if(stdVal==='afwezig') st='af';
+    }
+    if(st==='aan') aan++;else if(st==='af') af++;
+  });
+  if(af>0&&af>=aan) return'afwezig';
+  if(aan>0) return'aanwezig';
+  return'neutral';
+}
+
+// ============================================================
+// MAAND RENDEREN
+// ============================================================
+function getSlotStatus(wData,hData,stdData,dayIdx,lesId){
+  const key=`${dayIdx}_${lesId}`;
+  const slot=wData[key]||{};
+  const act=slot.act||'';
+  const hand=hData[key]||'';
+  const stdVal=stdData[key]||'';
+  if(hand==='rood') return'afwezig';
+  if(hand==='groen') return'aanwezig';
+  if(act==='toets') return'toets';
+  if(act&&act!=='leeg'&&AFWEZIG_SET.has(act)) return'afwezig';
+  if(act&&act!=='leeg'&&AANWEZIG_SET.has(act)) return'aanwezig';
+  if(!act||act==='leeg'){
+    if(stdVal==='aanwezig') return'aanwezig';
+    if(stdVal==='afwezig') return'afwezig';
+  }
+  return'neutral';
+}
+
+async function renderMonthGrid(){
+  const ll=await getLeerlingen();
+  const lnaam=ll[curLeerling]?ll[curLeerling].naam:`Leerling ${curLeerling+1}`;
+  const year=currentMonth.getFullYear();
+  const month=currentMonth.getMonth();
+  document.getElementById('maand-label').textContent=`${MAAND_NAMEN[month]} ${year} · ${lnaam}`;
+
+  const std=await getStandaard(curLeerling);
+  const weeks=getMonthWeeks(year,month);
+
+  const wDataCache={},hDataCache={};
+  for(const week of weeks){
+    const wstr=getWeekStr(week[0]);
+    wDataCache[wstr]=getWeekDataLocal(curLeerling,wstr);
+    hDataCache[wstr]=getHandDataLocal(curLeerling,wstr);
+  }
+
+  let html='<div class="maand-header-row">';
+  for(const dn of ['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag'])
+    html+=`<div class="gh-cell" style="text-align:center;font-size:11px;font-weight:600;color:var(--text2);padding:5px 3px">${dn.slice(0,2)}</div>`;
+  html+='</div>';
+
+  const tod=todayStr();
+  for(const week of weeks){
+    html+='<div class="maand-week-row">';
+    for(let di=0;di<5;di++){
+      const dag=week[di];
+      const buitenMaand=dag.getMonth()!==month;
+      const isToday=dateStr(dag)===tod;
+      const wstr=getWeekStr(week[0]);
+      const wData=wDataCache[wstr]||{};
+      const hData=hDataCache[wstr]||{};
+
+      html+=`<div class="maand-dag${buitenMaand?' buiten-maand':''}${isToday?' vandaag':''}">`;
+      html+=`<div class="maand-dag-num">${dag.getDate()}</div>`;
+      LESSEN.forEach(les=>{
+        if(les.pause){html+='<div class="les-sep"></div>';return;}
+        const st=getSlotStatus(wData,hData,std,di,les.id);
+        const num=les.label.replace('Les ','');
+        html+=`<div class="les-bar dd-${st}">${num}</div>`;
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  }
+
+  html+=`<div class="maand-legend">
+    <span style="display:flex;align-items:center;gap:5px"><span class="maand-legend-dot" style="background:var(--green-light);border-color:#9FE1CB"></span>Aanwezig</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="maand-legend-dot" style="background:var(--red-light);border-color:#F5C4B3"></span>Afwezig</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="maand-legend-dot" style="background:var(--purple-light);border-color:#C4C0F5"></span>Toets</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="maand-legend-dot" style="background:var(--bg2);border-color:var(--border)"></span>Geen data</span>
+    <em style="color:var(--text3)">Elk getal = lesuur (1–8) · streepje = pauze</em>
+  </div>`;
+
+  document.getElementById('maand-grid-inner').innerHTML=html;
+}
+
+// ============================================================
+// LEERLINGEN BEHEER
+// ============================================================
+async function openBeheer(){
+  const ll=await getLeerlingen();
+  let html='';
+  for(let i=0;i<25;i++){
+    const l=ll[i]||{naam:'',pw:''};
+    html+=`<div class="leerling-row"><span class="leerling-num">${i+1}.</span><input type="text" placeholder="Naam leerling" value="${esc(l.naam||'')}" id="bn-${i}" style="flex:1.5"><input type="text" placeholder="Wachtwoord" value="${esc(l.pw||'')}" id="bpw-${i}" style="flex:1"></div>`;
+  }
+  document.getElementById('beheer-grid').innerHTML=html;
+  document.getElementById('beheer-overlay').style.display='flex';
+}
+function closeBeheer(){document.getElementById('beheer-overlay').style.display='none';}
+async function saveBeheer(){
+  const ll=getLeerlingenLocal();
+  const arr=[];
+  for(let i=0;i<25;i++){
+    const naam=document.getElementById('bn-'+i).value.trim()||`Leerling ${String(i+1).padStart(2,'0')}`;
+    const pw=document.getElementById('bpw-'+i).value.trim();
+    const spId=(ll[i]&&ll[i].spId)||null;
+    arr.push({naam,pw,spId});
+  }
+  await saveLeerlingen(arr);
+  closeBeheer();buildLeerlingSelect();renderGrid();
+}
+
+// ============================================================
+// STANDAARDROOSTER
+// ============================================================
+async function openStandaard(){
+  const ll=await getLeerlingen();
+  document.getElementById('std-naam').textContent=ll[curLeerling]?ll[curLeerling].naam:'';
+  stdDraft=Object.assign({},await getStandaard(curLeerling));
+  renderStdGrid();
+  document.getElementById('standaard-overlay').style.display='flex';
+}
+function closeStandaard(){document.getElementById('standaard-overlay').style.display='none';}
+function clearStandaard(){if(confirm('Weet je zeker dat je het volledige standaardrooster wilt wissen?')){stdDraft={};renderStdGrid();}}
+async function saveStandaard(){await saveStandaard_SP(curLeerling,stdDraft);closeStandaard();renderGrid();}
+function renderStdGrid(){
+  let html='<div class="std-header-row"><div class="gh-cell"></div>';
+  for(let d=0;d<5;d++) html+=`<div class="gh-cell">${DAGNAMEN[d]}</div>`;
+  html+='</div>';
+  LESSEN.forEach(les=>{
+    const isPauze=!!les.pause;
+    html+=`<div class="std-row"><div class="time-cell"><div class="time-label">${les.label}</div><div>${les.tijd}</div></div>`;
+    for(let d=0;d<5;d++){
+      if(isPauze){html+=`<div class="std-slot s-pause"></div>`;continue;}
+      const key=`${d}_${les.id}`;
+      const val=stdDraft[key]||'';
+      let cls='std-slot',lbl='—';
+      if(val==='aanwezig'){cls+=' s-aanwezig';lbl='Aanwezig';}
+      else if(val==='afwezig'){cls+=' s-afwezig';lbl='Afwezig';}
+      html+=`<div class="${cls}" onclick="toggleStd(${d},'${les.id}')">${lbl}</div>`;
+    }
+    html+='</div>';
+  });
+  document.getElementById('std-grid').innerHTML=html;
+}
+function toggleStd(d,id){
+  const key=`${d}_${id}`;const cur=stdDraft[key]||'';
+  stdDraft[key]=cur===''?'aanwezig':cur==='aanwezig'?'afwezig':'';
+  renderStdGrid();
+}
+
+// ============================================================
+// PRINTEN
+// ============================================================
+async function printEnkel(){
+  const ll=await getLeerlingen();
+  const lnaam=ll[curLeerling]?ll[curLeerling].naam:`Leerling ${curLeerling+1}`;
+  const wk=getISOWeekNum(weekStart);
+  const wstr=getWeekStr(weekStart);
+  const data=await getWeekData(curLeerling,wstr);
+  const std=await getStandaard(curLeerling);
+  const html=buildPrintPage(lnaam,wk,weekStart,data,std);
+  document.getElementById('print-area').innerHTML=`<div class="print-page">${html}</div>`;
+  window.print();
+  setTimeout(()=>document.getElementById('print-area').innerHTML='',1200);
+}
+
+function openWeekSel(){
+  selectedPrintWeek=null;
+  const now=new Date();const day=now.getDay()||7;
+  const mon=new Date(now);mon.setDate(now.getDate()-(day-1));
+  let html='';
+  for(let i=-4;i<=8;i++){
+    const ws=addDays(mon,i*7);
+    const wk=getISOWeekNum(ws);
+    const yr=ws.getFullYear();
+    const wstr=getWeekStr(ws);
+    html+=`<div class="week-opt" id="wopt-${wstr}" onclick="selWeek('${wstr}',this)">
+      <div class="week-opt-num">Week ${wk} · ${yr}</div>
+      <div class="week-opt-dates">${formatDate(ws,'D MMM')} – ${formatDate(addDays(ws,4),'D MMM YYYY')}</div>
+    </div>`;
+  }
+  document.getElementById('week-sel-grid').innerHTML=html;
+  document.getElementById('weeksel-overlay').style.display='flex';
+}
+function selWeek(wstr,el){
+  selectedPrintWeek=wstr;
+  document.querySelectorAll('.week-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function closeWeekSel(){document.getElementById('weeksel-overlay').style.display='none';}
+
+async function doPrintOverzicht(){
+  if(!selectedPrintWeek){alert('Selecteer eerst een week.');return;}
+  const parts=selectedPrintWeek.split('-W');
+  const yr=parseInt(parts[0]);const wk=parseInt(parts[1]);
+  // bereken weekStart van geselecteerde week
+  const jan4=new Date(yr,0,4);
+  const day=jan4.getDay()||7;
+  const wsDate=addDays(jan4,1-day+(wk-1)*7);
+  const ll=await getLeerlingen();
+  const sorted=[...ll.map((l,i)=>({...l,idx:i}))].filter(l=>l.naam&&!l.naam.startsWith('Leerling ')||true).sort((a,b)=>a.naam.localeCompare(b.naam,'nl'));
+  let pages='';
+  for(let p=0;p<sorted.length;p+=4){
+    const group=sorted.slice(p,p+4);
+    let pageHtml=`<div class="print-title">Weekoverzicht — Week ${wk} (${formatDate(wsDate,'D MMM')} – ${formatDate(addDays(wsDate,4),'D MMM YYYY')})</div>`;
+    pageHtml+=`<table class="print-table"><thead><tr><th style="width:50pt">Tijdslot</th>`;
+    for(let d=0;d<5;d++){
+      const dag=addDays(wsDate,d);
+      group.forEach(l=>pageHtml+=`<th style="font-size:7pt">${DAGNAMEN[d]} ${formatDate(dag,'D/M')}<br><span style="font-weight:400">${esc(l.naam)}</span></th>`);
+    }
+    pageHtml+='</tr></thead><tbody>';
+    LESSEN.forEach(les=>{
+      if(les.pause){
+        pageHtml+=`<tr><td class="td-time td-pause">${les.tijd}</td>`;
+        for(let d=0;d<5;d++) group.forEach(()=>pageHtml+=`<td class="td-pause"></td>`);
+        pageHtml+='</tr>';return;
+      }
+      pageHtml+=`<tr><td class="td-time"><strong>${les.label}</strong><br>${les.tijd}</td>`;
+      for(let d=0;d<5;d++){
+        group.forEach(l=>{
+          const data=getWeekDataLocal(l.idx,selectedPrintWeek);
+          const std=getStandaardLocal(l.idx);
+          const key=`${d}_${les.id}`;
+          const act=(data[key]||{}).act||'';
+          const stdVal=std[key]||'';
+          let cls='',txt='';
+          if(act&&act!=='leeg'&&ACT_MAP[act]){cls=`pc-${ACT_MAP[act].kleur}`;txt=ACT_MAP[act].label;}
+          else if(!act||act==='leeg'){
+            if(stdVal==='aanwezig'){cls='pc-groen-std';txt='Aanw.';}
+            else if(stdVal==='afwezig'){cls='pc-rood-std';txt='Afw.';}
+          }
+          pageHtml+=`<td class="${cls}" style="font-size:7pt;text-align:center">${txt}</td>`;
+        });
+      }
+      pageHtml+='</tr>';
+    });
+    pageHtml+='</tbody></table>';
+    pages+=`<div class="print-page">${pageHtml}</div>`;
+  }
+  closeWeekSel();
+  document.getElementById('print-area').innerHTML=pages;
+  window.print();
+  setTimeout(()=>document.getElementById('print-area').innerHTML='',1200);
+}
+
+function buildPrintPage(naam,wk,ws,data,std){
+  let html=`<div class="print-title">${esc(naam)} — Week ${wk}</div>`;
+  html+=`<div class="print-sub">${formatDate(ws,'D MMM')} – ${formatDate(addDays(ws,4),'D MMM YYYY')}</div>`;
+  html+=`<table class="print-table"><thead><tr><th class="td-time">Tijdslot</th>`;
+  for(let d=0;d<5;d++) html+=`<th>${DAGNAMEN[d]} ${formatDate(addDays(ws,d),'D/M')}</th>`;
+  html+='</tr></thead><tbody>';
+  LESSEN.forEach(les=>{
+    if(les.pause){
+      html+=`<tr><td class="td-time td-pause">${les.tijd}</td>`;
+      for(let d=0;d<5;d++) html+=`<td class="td-pause">pauze</td>`;
+      html+='</tr>';return;
+    }
+    html+=`<tr><td class="td-time"><strong>${les.label}</strong><br>${les.tijd}</td>`;
+    for(let d=0;d<5;d++){
+      const key=`${d}_${les.id}`;
+      const act=(data[key]||{}).act||'';
+      const stdVal=std[key]||'';
+      let cls='',txt='';
+      if(act&&act!=='leeg'&&ACT_MAP[act]){cls=`pc-${ACT_MAP[act].kleur}`;txt=ACT_MAP[act].label;}
+      else if(!act||act==='leeg'){
+        if(stdVal==='aanwezig'){cls='pc-groen-std';txt='Aanwezig';}
+        else if(stdVal==='afwezig'){cls='pc-rood-std';txt='Afwezig';}
+      }
+      html+=`<td class="${cls}" style="text-align:center">${txt}</td>`;
+    }
+    html+='</tr>';
+  });
+  html+='</tbody></table>';return html;
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ============================================================
+// GRAPH API — E-MAIL & PERSONEN ZOEKEN
+// ============================================================
+async function getGraphToken(){
+  if(!msalInstance) return null;
+  const scopes=['https://graph.microsoft.com/Mail.Send','https://graph.microsoft.com/People.Read'];
+  try{
+    const accounts=msalInstance.getAllAccounts();
+    const req={scopes,account:accounts[0]||undefined};
+    const resp=accounts.length>0
+      ?await msalInstance.acquireTokenSilent(req)
+      :await msalInstance.acquireTokenPopup({scopes});
+    return resp.accessToken;
+  }catch(e){
+    try{return(await msalInstance.acquireTokenPopup({scopes})).accessToken;}
+    catch(e2){return null;}
+  }
+}
+
+async function searchPeople(query){
+  if(!query||query.length<2) return[];
+  const token=await getGraphToken();
+  if(!token) return null; // null = no permission, [] = no results
+  try{
+    const resp=await fetch(
+      `https://graph.microsoft.com/v1.0/me/people?$search=${encodeURIComponent(query)}&$select=displayName,emailAddresses&$top=8`,
+      {headers:{Authorization:`Bearer ${token}`}}
+    );
+    if(!resp.ok) return null;
+    const data=await resp.json();
+    return(data.value||[]).filter(p=>p.emailAddresses&&p.emailAddresses.length>0&&p.emailAddresses[0].address);
+  }catch(e){return null;}
+}
+
+async function sendToetsEmail(toEmail,toName,leerlingNaam,dagNaam,datumStr,lessen,vak){
+  const token=await getGraphToken();
+  if(!token) return false;
+  // Bouw tijdslot-tekst: enkelvoud of bereik
+  let tijdslot;
+  if(lessen.length===1){
+    tijdslot=`${lessen[0].label} (${lessen[0].tijd})`;
+  }else{
+    const eerste=lessen[0];const laatste=lessen[lessen.length-1];
+    const startTijd=eerste.tijd.split('–')[0].trim();
+    const eindTijd=laatste.tijd.split('–')[1].trim();
+    tijdslot=`${eerste.label} t/m ${laatste.label} (${startTijd}–${eindTijd})`;
+  }
+  const body=`Beste ${toName||toEmail},\n\nVia de weekplanning is een toets ingepland voor:\n\n  Leerling : ${leerlingNaam}\n  Dag      : ${dagNaam} ${datumStr}\n  Tijdslot : ${tijdslot}${vak?`\n  Vak      : ${vak}`:''}\n\nMet vriendelijke groet,\nWeekplanning Sport & School`;
+  try{
+    const resp=await fetch('https://graph.microsoft.com/v1.0/me/sendMail',{
+      method:'POST',
+      headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({
+        message:{
+          subject:`📝 Toets gepland — ${leerlingNaam}`,
+          body:{contentType:'Text',content:body},
+          toRecipients:[{emailAddress:{address:toEmail,name:toName||toEmail}}]
+        },
+        saveToSentItems:false
+      })
+    });
+    return resp.ok||resp.status===202;
+  }catch(e){return false;}
+}
+
+// ============================================================
+// TOETS NOTIFICATIE OVERLAY
+// ============================================================
+let toetsNotifData=null;
+let _searchTimer=null;
+
+function openToetsNotif(d,id){
+  const les=LESSEN.find(l=>l.id===id);
+  if(!les) return;
+  const dag=addDays(weekStart,d);
+  const dagVoluit=['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag'][d];
+  const ll=getLeerlingenLocal();
+  const lnaam=(ll[curLeerling]&&ll[curLeerling].naam)||`Leerling ${curLeerling+1}`;
+  toetsNotifData={d,id,les,dag,dagVoluit,lnaam};
+
+  document.getElementById('toetsnotif-info').innerHTML=
+    `<strong style="font-size:13px">🎓 ${esc(lnaam)}</strong><br>`+
+    `<span style="color:var(--text2)">${dagVoluit} ${formatDate(dag,'D MMM YYYY')} &nbsp;·&nbsp; ${les.label} (${les.tijd})</span>`;
+
+  // Extra lesuren: alles ná het huidige uur (pauzes overslaan)
+  const lesIdx=LESSEN.findIndex(l=>l.id===id);
+  const volgendeLessen=LESSEN.slice(lesIdx+1).filter(l=>!l.pause);
+  const extraSection=document.getElementById('toets-extra-section');
+  const extraContainer=document.getElementById('toets-extra-lessen');
+  if(volgendeLessen.length>0){
+    extraContainer.innerHTML=volgendeLessen.map(l=>
+      `<label class="toets-les-check" onclick="this.classList.toggle('is-checked',this.querySelector('input').checked)">
+        <input type="checkbox" class="toets-extra-cb" value="${l.id}" onchange="this.closest('.toets-les-check').classList.toggle('is-checked',this.checked)">
+        <span>${l.label}</span>
+        <span class="toets-les-tijd">${l.tijd}</span>
+      </label>`
+    ).join('');
+    extraSection.style.display='block';
+  }else{
+    extraContainer.innerHTML='';
+    extraSection.style.display='none';
+  }
+
+  // reset collega & vak velden
+  document.getElementById('toets-search').value='';
+  document.getElementById('toets-email').value='';
+  document.getElementById('toets-selname').value='';
+  document.getElementById('toets-vak').value='';
+  document.getElementById('toets-selected').style.display='none';
+  document.getElementById('toets-suggestions').style.display='none';
+  document.getElementById('toets-suggestions').innerHTML='';
+  document.getElementById('btn-stuur-toets').disabled=true;
+  document.getElementById('btn-stuur-toets').textContent='📨 Verstuur melding';
+  document.getElementById('toets-offline-note').style.display=spOnline?'none':'block';
+  document.getElementById('toets-perm-note').style.display='none';
+  document.getElementById('toetsnotif-overlay').style.display='flex';
+  setTimeout(()=>document.getElementById('toets-search').focus(),100);
+}
+
+// Geeft alle extra aangevinkte lessen terug (voor e-mail en opslaan)
+function getExtraToetsLessen(){
+  return Array.from(document.querySelectorAll('.toets-extra-cb:checked'))
+    .map(cb=>LESSEN.find(l=>l.id===cb.value)).filter(Boolean);
+}
+
+// Sla alle aangevinkte extra lessen op als 'toets' in de weekplanning
+async function applyExtraToetsLessen(){
+  const checked=document.querySelectorAll('.toets-extra-cb:checked');
+  if(!checked.length) return;
+  const {d}=toetsNotifData;
+  const wstr=getWeekStr(weekStart);
+  for(const cb of checked){
+    await setSlot(curLeerling,wstr,`${d}_${cb.value}`,'toets');
+  }
+  await renderGrid();
+}
+
+// "Overslaan": sla eventuele extra lessen op, geen e-mail
+async function closeToetsNotif(){
+  await applyExtraToetsLessen();
+  document.getElementById('toetsnotif-overlay').style.display='none';
+}
+
+function onToetsSearch(val){
+  // Reset selectie
+  document.getElementById('toets-email').value='';
+  document.getElementById('toets-selname').value='';
+  document.getElementById('btn-stuur-toets').disabled=true;
+  document.getElementById('toets-selected').style.display='none';
+  clearTimeout(_searchTimer);
+
+  if(!val||val.length<1){
+    document.getElementById('toets-suggestions').style.display='none';
+    return;
+  }
+
+  // Direct e-mailadres ingevoerd?
+  if(val.includes('@')&&val.includes('.')){
+    selectColleague(val,val);
+    document.getElementById('toets-suggestions').style.display='none';
+    return;
+  }
+
+  _searchTimer=setTimeout(async()=>{
+    const results=await searchPeople(val);
+    if(results===null){
+      // geen rechten
+      document.getElementById('toets-perm-note').style.display='block';
+      document.getElementById('toets-suggestions').style.display='none';
+      return;
+    }
+    const box=document.getElementById('toets-suggestions');
+    if(results.length===0){box.style.display='none';return;}
+    box.innerHTML=results.map(p=>{
+      const em=p.emailAddresses[0].address;
+      const nm=p.displayName;
+      return`<div class="suggestion-row" onclick="selectColleague('${em.replace(/'/g,"\\'")}','${nm.replace(/'/g,"\\'")}')">
+        <strong>${esc(nm)}</strong><br><span style="font-size:11px;color:var(--text2)">${esc(em)}</span>
+      </div>`;
+    }).join('');
+    box.style.display='block';
+  },320);
+}
+
+function selectColleague(email,name){
+  document.getElementById('toets-email').value=email;
+  document.getElementById('toets-selname').value=name;
+  document.getElementById('toets-search').value=name===email?email:name;
+  document.getElementById('toets-suggestions').style.display='none';
+  const sel=document.getElementById('toets-selected');
+  sel.innerHTML=`<span class="selected-badge">✓ ${esc(name===email?email:name+' — '+email)}</span>`;
+  sel.style.display='block';
+  document.getElementById('btn-stuur-toets').disabled=false;
+}
+
+async function stuurToetsNotif(){
+  const email=document.getElementById('toets-email').value.trim();
+  if(!email){alert('Selecteer of typ eerst een e-mailadres.');return;}
+  const btn=document.getElementById('btn-stuur-toets');
+  btn.textContent='⏳ Versturen…';btn.disabled=true;
+  const {lnaam,dagVoluit,les,dag}=toetsNotifData;
+  const naam=document.getElementById('toets-selname').value||email;
+  const vak=document.getElementById('toets-vak').value.trim();
+  // Verzamel alle lessen (origineel + extra) vóór we de overlay sluiten
+  const extraLessen=getExtraToetsLessen();
+  const alleLessen=[les,...extraLessen];
+  // Sla extra lessen op in planning
+  await applyExtraToetsLessen();
+  // Verstuur e-mail
+  const ok=await sendToetsEmail(email,naam,lnaam,dagVoluit,formatDate(dag,'D MMM YYYY'),alleLessen,vak);
+  if(ok){
+    showSync('ok',`📨 Melding verstuurd naar ${naam}`);
+    document.getElementById('toetsnotif-overlay').style.display='none';
+  }else{
+    btn.textContent='📨 Verstuur melding';btn.disabled=false;
+    alert('Versturen mislukt. Controleer de verbinding of het e-mailadres.\n\nTip: vraag IT om Mail.Send rechten toe te voegen aan de app-registratie.');
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+loadConfig();
+if(spConfig.siteUrl&&spConfig.clientId) initMSAL();
+</script>
+</body>
+</html>
